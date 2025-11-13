@@ -2,6 +2,10 @@
 
 [Gleam](https://gleam.run) language plugin to [vitejs](https://vite.dev/).
 
+## 🧪 Demo
+
+- [vite-plugin-gleam-demo](https://github.com/gleam-br/vite-plugin-gleam-demo)
+
 ## 🌄 Roadmap
 
 - [ ] Unit tests

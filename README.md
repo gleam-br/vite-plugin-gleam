@@ -12,6 +12,9 @@
 - [ ] Unit tests
 - [ ] More docs
 - [ ] GH workflow
-  - [ ] test & build
-  - [ ] changelog & publish
+  - [ ] test
+  - [x] build
+  - [x] changelog & issue to doc
+  - [x] ~~auto publish~~ manual publish
+    - [x] `gleam publish`
 - [ ] Pure gleam code

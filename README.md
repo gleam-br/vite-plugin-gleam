@@ -5,6 +5,7 @@
 ## 🧪 Demo
 
 - [vite-plugin-gleam-demo](https://github.com/gleam-br/vite-plugin-gleam-demo)
+- [vite-ts-plugin-gleam-demo](https://github.com/gleam-br/vite-ts-plugin-gleam-demo)
 
 ## 🌄 Roadmap
 

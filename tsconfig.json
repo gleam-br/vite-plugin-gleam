@@ -1,10 +1,9 @@
 {
 	"compilerOptions": {
-		"target": "ES2023",
+		"target": "ES2022",
 		"module": "Preserve",
 		"moduleDetection": "force",
-
-		"moduleResolution": "bundler",
+		"moduleResolution": "node",
 		"allowImportingTsExtensions": true,
 		"verbatimModuleSyntax": true,
 		"noEmit": true,

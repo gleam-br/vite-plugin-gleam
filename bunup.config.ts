@@ -5,6 +5,6 @@ export default defineConfig({
   entry: ["src/index.ts"],
   format: ["esm", "cjs"],
   target: "node",
-  sourcemap: "linked",
+  clean: true,
   plugins: [exports(), unused()]
 });

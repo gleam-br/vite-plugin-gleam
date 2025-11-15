@@ -4,7 +4,11 @@
 
 import { sep } from "node:path";
 
-export const PLUGIN_NAME = "vite-plugin-gleam";
+// todo experimental feat need testes
+// - take [here](https://github.com/gleam-br/esbuild-plugin-gleam/blob/caffc638323f0c775bcca4e03d967cd5103aba82/index.js#L17C1-L18C1)
+// Thanks @jim
+export const PLUGIN_NAME = JSON.parse(await readFile('../package.json')).name;
+//export const PLUGIN_NAME = "vite-plugin-gleam";
 
 /** Gleam binary file */
 export const GLEAM_BIN = "gleam";

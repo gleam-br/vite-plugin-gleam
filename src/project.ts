@@ -120,7 +120,7 @@ function getPluginOpts(options: any | undefined): GleamPlugin {
     : typeof options.build?.config === "string"
       ? options.build?.config
       : process_cwd();
-  const level = options.log
+  const level = typeof options.log === "string"
     ? options.log
     : typeof options.log?.level === "string"
       ? options.log?.level

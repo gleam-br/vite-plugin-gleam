@@ -7,15 +7,19 @@
 Vite config [vite.config.js](https://vite.dev/config/):
 
 ```ts
+import { resolve } from "vite";
+import { defineConfig } from "vite";
+
 // type to plugin options
-import {type GleamPlugin} from "./project";
+import gleam from "vite-plugin-gleam";
+import {type GleamPlugin} from "./src/project";
 
 export default defineConfig({
   plugins: [
     // gleam plugin options
     gleam({
       // gleam root dir project
-      cwd: ".",
+      cwd: ".", // process.cwd() is default
       // gleam binary path
       bin: "gleam",
       log: {

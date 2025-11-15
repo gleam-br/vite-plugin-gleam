@@ -2,10 +2,52 @@
 
 [Gleam](https://gleam.run) language plugin to [vitejs](https://vite.dev/).
 
+## Options
+
+Vite config [vite.config.js](https://vite.dev/config/):
+
+```ts
+// type to plugin options
+import {type GleamPlugin} from "./project";
+
+export default defineConfig({
+  plugins: [
+    // gleam plugin options
+    gleam({
+      // gleam root dir project
+      cwd: ".",
+      // gleam binary path
+      bin: "gleam",
+      log: {
+        // "info" | "debug" | "trace" | "none"
+        level: "info",
+        // if put date and time
+        time: true
+      },
+      build: {
+        // Only bun runtime to force do build
+        force: true,
+        // gleam build arg to break on warnings
+        warningsAsErrors: true,
+        // gleam build arg to show or not cmd output
+        noPrintProgress: false
+      }
+    } as GleamPlugin)
+  ],
+  resolve: {
+    alias: {
+      // vite aliases to gleam build dir
+      '@gleam': resolve(__dirname, "./build/dev/javascript")
+    }
+  }
+})
+```
+
 ## 🧪 Demo
 
 - [vite-plugin-gleam-demo](https://github.com/gleam-br/vite-plugin-gleam-demo)
 - [vite-ts-plugin-gleam-demo](https://github.com/gleam-br/vite-ts-plugin-gleam-demo)
+- [vite-lustre-plugin-gleam-demo](https://github.com/gleam-br/vite-lustre-plugin-gleam-demo)
 
 ## 🌄 Roadmap
 

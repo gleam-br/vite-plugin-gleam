@@ -62,5 +62,5 @@ export default defineConfig({
   - [x] build
   - [x] changelog & issue to doc
   - [x] ~~auto publish~~ manual publish
-    - [x] `gleam publish`
+    - [x] `npm publish`
 - [ ] Pure gleam code

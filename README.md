@@ -2,7 +2,7 @@
 
 [Gleam](https://gleam.run) language plugin to [vitejs](https://vite.dev/).
 
-## Options
+## 🌸 Options
 
 Vite config [vite.config.js](https://vite.dev/config/):
 

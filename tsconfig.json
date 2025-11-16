@@ -19,6 +19,7 @@
 
 		"noUnusedLocals": false,
 		"noUnusedParameters": false,
+		"resolveJsonModule": true,
 		"noPropertyAccessFromIndexSignature": false
 	},
 

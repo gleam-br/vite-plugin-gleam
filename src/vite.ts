@@ -1,5 +1,7 @@
 /**
+ *
  * Vite plugin to gleam language.
+ *
  */
 
 import { readFileSync } from "fs";
@@ -188,6 +190,7 @@ export function exclude(config: UserConfig): UserConfig | undefined {
   }
 
   let origin = config.build.watch!.exclude;
+
   if (!origin) {
     origin = [];
   } else if (typeof origin !== "object") {

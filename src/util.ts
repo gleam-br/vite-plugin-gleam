@@ -1,16 +1,14 @@
 /**
- * Gleam BR js plugin util constant and functions
+ *
+ * Gleam vite plugin utils constant and functions
+ *
  */
 
 import { sep } from "node:path";
+import { name } from "../package.json";
 
-// todo experimental feat need testes
-// - take [here](https://github.com/gleam-br/esbuild-plugin-gleam/blob/caffc638323f0c775bcca4e03d967cd5103aba82/index.js#L17C1-L18C1)
-// Thanks @jim
-//import pkg from "../package.json";
-
-//export const PLUGIN_NAME:string = JSON.parse(await readFile('../package.json')).name;
-export const PLUGIN_NAME = "vite-plugin-gleam";
+/** Plugin name from package.json */
+export const PLUGIN_NAME: string = name;
 
 /** Gleam binary file */
 export const GLEAM_BIN = "gleam";
@@ -37,13 +35,13 @@ export const EXT_GLEAM: string = ".gleam";
 export const EXT_MJS: string = ".mjs";
 
 /** Typescript file extension */
-export const EXT_TS: string = ".d.mts";
+export const EXT_DTS: string = ".d.mts";
 
 /** Gleam constraint to filter gleam files */
 export const CONSTRAINTS: { filter: RegExp } = { filter: GLEAM_REGEX_FILE }
 
 /**
- * Console log.
+ * Log from high order function passing level and if has time in log.
  *
  * @param msg Message log.
  * @param error if error or not.
@@ -54,6 +52,7 @@ export const logger = (level: string, time = false) => {
   const isDebug = isTrace || level === "debug";
   const isInfo = !isDebug;
 
+  // console.log(msg)
   return (msg: string, error = false): void => {
     const isCmd = msg.startsWith("$ ");
 

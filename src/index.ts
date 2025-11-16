@@ -1,5 +1,7 @@
 /**
+ *
  * Gleam BR vite plugin to gleam files
+ *
  */
 
 import type {
@@ -48,15 +50,15 @@ export default function plugin(options: any | undefined): Plugin {
     },
     async buildStart() {
       // refresh config gleam.toml
-      prj = projectConfig(prj);
+      prj = await projectConfig(prj);
       // build function singleton
-      projectBuild(prj);
+      await projectBuild(prj);
     },
     async handleHotUpdate(ctx: HmrContext) {
       if (isGleam(ctx.file)) {
         const { log } = prj;
 
-        projectBuild(prj);
+        await projectBuild(prj);
         log(`[hotUpdate] ok!`);
         log(`:>[hotUpdate] file: ${ctx.file}`)
       }

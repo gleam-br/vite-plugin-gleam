@@ -41,6 +41,7 @@
     "gleam",
     "javascript",
     "bun-plugin",
+    "bunup-plugin",
     "vite-plugin"
   ],
   "repository": {

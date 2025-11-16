@@ -84,7 +84,6 @@ export interface GleamPlugin {
  * Gleam build options.
  */
 export interface GleamBuild {
-  force: boolean;
   noPrintProgress: boolean;
   warningsAsErrors: boolean;
 }
@@ -103,7 +102,6 @@ const GLEAM_OPT_EMPTY = {
   log: { time: false, level: "none" },
   cwd: processCwd(),
   build: {
-    force: false,
     noPrintProgress: true,
     warningsAsErrors: false,
   }
@@ -117,7 +115,7 @@ const GLEAM_OPT_EMPTY = {
  */
 export function projectNew(options: any | undefined): GleamProject {
   const opts = getPluginOpts(options);
-  const { cwd, bin, log: { level, time }, build: { force, noPrintProgress, warningsAsErrors } } = opts
+  const { cwd, bin, log: { level, time }, build: { noPrintProgress, warningsAsErrors } } = opts
   // Gleam expects a project to have `src/` directory at project root.
   const src = resolve(cwd, GLEAM_SRC);
   // Gleam compiler outputs artifacts under `build/` directory at project root.
@@ -132,7 +130,6 @@ export function projectNew(options: any | undefined): GleamProject {
   log(`:> cwd: '${cwd}'`);
   log(`:> log.time: '${time}'`);
   log(`:> log.level: '${level}'`);
-  log(`:> build.force: '${force}'`);
 
   return {
     bin,
@@ -145,7 +142,6 @@ export function projectNew(options: any | undefined): GleamProject {
     },
     args: {
       build: {
-        force,
         noPrintProgress,
         warningsAsErrors
       }
@@ -291,8 +287,6 @@ function getPluginOpts(options: any | undefined): GleamPlugin {
     || options.build?.warningsAsErrors === true;
   const noPrintProgress = !(options.noPrintProgress === false
     || options.build?.noPrintProgress === false);
-  const force = options.force === true
-    || options.build?.force === true;
 
   return {
     cwd,
@@ -302,7 +296,6 @@ function getPluginOpts(options: any | undefined): GleamPlugin {
       time
     },
     build: {
-      force,
       noPrintProgress,
       warningsAsErrors,
     }

@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.4] - 2025-11-16
+
+### Added
+- Add promisify functions to exec, read and verify files by @salespaulo
+
+### Changed
+- Doc ajusts by @salespaulo
+- Rollback dynamic plugin name by @salespaulo
+- Change PLUGIN_NAME to dynamic import from package.json by @salespaulo
+- Merge branch 'main' of github.com:gleam-br/vite-plugin-gleam by @salespaulo
+- Update changelog by @github-actions[bot]
+
+### Fixed
+- Fix readme options section by @salespaulo
+
+### Removed
+- Remove lib rollup by @salespaulo
+
 ## [0.1.3] - 2025-11-15
 
 ### Changed
@@ -42,6 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## New Contributors
 * @salespaulo made their first contribution
+[0.1.4]: https://github.com/gleam-br/vite-plugin-gleam/compare/v0.1.3..v0.1.4
 [0.1.3]: https://github.com/gleam-br/vite-plugin-gleam/compare/v0.1.2..v0.1.3
 [0.1.2]: https://github.com/gleam-br/vite-plugin-gleam/compare/v0.1.1..v0.1.2
 

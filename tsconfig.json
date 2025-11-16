@@ -3,7 +3,7 @@
 		"target": "ES2022",
 		"module": "Preserve",
 		"moduleDetection": "force",
-		"moduleResolution": "node",
+		"moduleResolution": "bundler",
 		"allowImportingTsExtensions": true,
 		"verbatimModuleSyntax": true,
 		"noEmit": true,
@@ -19,7 +19,6 @@
 
 		"noUnusedLocals": false,
 		"noUnusedParameters": false,
-		"resolveJsonModule": true,
 		"noPropertyAccessFromIndexSignature": false
 	},
 

@@ -29,8 +29,6 @@ export default defineConfig({
         time: true
       },
       build: {
-        // Only bun runtime to force do build
-        force: true,
         // gleam build arg to break on warnings
         warningsAsErrors: true,
         // gleam build arg to show or not cmd output

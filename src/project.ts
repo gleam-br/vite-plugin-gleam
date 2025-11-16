@@ -1,6 +1,6 @@
 /**
  *
- * Gleam vite plugin project functions
+ * Gleam vite plugin project functions.
  *
  */
 

@@ -1,6 +1,6 @@
 /**
  *
- * Gleam BR vite plugin to gleam files
+ * Gleam vite plugin to gleam langueage files.
  *
  */
 

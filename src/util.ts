@@ -1,6 +1,6 @@
 /**
  *
- * Gleam vite plugin utils constant and functions
+ * Gleam vite plugin utils constant and functions.
  *
  */
 

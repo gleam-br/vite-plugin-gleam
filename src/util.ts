@@ -34,9 +34,6 @@ export const EXT_GLEAM: string = ".gleam";
 /** Mjs file extension */
 export const EXT_MJS: string = ".mjs";
 
-/** Typescript file extension */
-export const EXT_DTS: string = ".d.mts";
-
 /** Gleam constraint to filter gleam files */
 export const CONSTRAINTS: { filter: RegExp } = { filter: GLEAM_REGEX_FILE }
 

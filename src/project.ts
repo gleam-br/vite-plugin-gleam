@@ -230,7 +230,9 @@ export async function projectBuild(project: GleamProject): Promise<GleamBuildOut
   try {
     log(`$ ${cmd}`);
     const res = await exec(cmd, { cwd, encoding: "utf8" });
-    log(`:> ${JSON.stringify(res)}`);
+
+    log(`:> stdout: ${res.stdout}`);
+    log(`:> stderr: ${res.stderr}`);
     return res;
   } catch (err) {
     log(`Failed '${cmd}`, true);

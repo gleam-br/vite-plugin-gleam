@@ -38,6 +38,7 @@
   "keywords": [
     "bun",
     "bunup",
+    "vite",
     "gleam",
     "javascript",
     "bun-plugin",

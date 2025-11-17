@@ -1,16 +1,24 @@
 {
   "name": "vite-plugin-gleam",
-  "description": "Gleam plugin to vite runtime.",
   "version": "0.1.7-alpha+001",
+  "license": "Apache-2.0",
+  "description": "Gleam plugin to vite runtime.",
   "type": "module",
+  "module": "./dist/index.js",
+  "main": "./dist/index.cjs",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "dev": "bunup --watch",
+    "build": "bun run type-check && bunup",
+    "compile": "bunup",
+    "type-check": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
   "files": [
     "dist",
     "README.md",
     "LICENSE"
   ],
-  "module": "./dist/index.js",
-  "main": "./dist/index.cjs",
-  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": {
@@ -23,14 +31,6 @@
       }
     },
     "./package.json": "./package.json"
-  },
-  "license": "Apache-2.0",
-  "scripts": {
-    "dev": "bunup --watch",
-    "build": "bun run type-check && bunup",
-    "compile": "bunup",
-    "type-check": "tsc --noEmit",
-    "prepublishOnly": "npm run build"
   },
   "author": {
     "name": "@gleam-br",

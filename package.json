@@ -29,7 +29,8 @@
     "dev": "bunup --watch",
     "build": "bun run type-check && bunup",
     "compile": "bunup",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
   },
   "author": {
     "name": "@gleam-br",

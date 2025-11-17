@@ -146,10 +146,12 @@ export function projectNew(options: any | undefined): GleamProject {
 }
 
 /**
- * Returns gleam project name.
+ * Get gleam.toml info.
  *
- * @param project Gleam project info, see project function.
- * @returns Gleam project config info.
+ * @param project Gleam project.
+ * @returns Gleam config.
+ * @see GleamProject
+ * @see GleamConfig
  */
 export async function projectConfig(project: GleamProject): Promise<GleamProject> {
   const { log, dir: { cwd } } = project;
@@ -240,7 +242,7 @@ export async function projectBuild(project: GleamProject): Promise<GleamBuildOut
  * @param ext Extension to replaced.
  * @returns File path replaced to extension.
  */
-export function replaceId(file: string, ext: string = EXT_MJS): string | undefined {
+export function replaceId(file: string, ext: string = EXT_MJS): string {
   return file.replace(GLEAM_REGEX_FILE, ext);
 }
 

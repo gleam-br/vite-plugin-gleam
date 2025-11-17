@@ -195,19 +195,16 @@ function normalize(
     throw Error(`ERROR | ${error}`)
   }
 
+  // replace importer
   const replaced = replaceId(importer);
-
-  if (!replaced) {
-    // skipping nothing to do
-    return;
-  }
-
+  log(`:>[normalize] replaced ${replaced}`);
+  // relative identification
   let path = relative(cwd, replaced);
-  log(`:>[normalize] relative cwd ${path}`);
+  log(`:>[normalize] relative ${path}`);
 
   if (path.startsWith(GLEAM_SRC)) {
     path = path.replace(`${GLEAM_SRC}${sep}`, `${cfg?.name}${sep}`);
-    log(`:>[normalize] found 'src' replace to '${cfg?.name}${sep}'`);
+    log(`:>[normalize] 'src' to '${cfg?.name}'`);
   }
 
   log(`[normalize] ok!`);

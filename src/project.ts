@@ -17,6 +17,8 @@ import { exec as execCallback } from "node:child_process";
 
 import { parse } from "toml";
 
+import { execa } from "execa";
+
 import {
   PLUGIN_VRN,
   GLEAM_BIN,
@@ -31,7 +33,6 @@ import {
 } from "./util";
 
 // promisify
-const exec = promisify(execCallback);
 const lstat = promisify(lstatCallback);
 const readFile = promisify(readFileCallback);
 
@@ -202,13 +203,12 @@ export async function projectConfig(project: GleamProject): Promise<GleamProject
 export async function projectBuild(project: GleamProject): Promise<GleamBuildOut> {
   const {
     bin,
-    cfg,
     log,
     dir: { cwd },
     build: { noPrintProgress, warningsAsErrors }
   } = project;
 
-  const args = [bin, "build", "--target", "javascript"];
+  const args = ["build", "--target", "javascript"];
 
   if (warningsAsErrors) {
     args.push("--warnings-as-errors");
@@ -218,17 +218,18 @@ export async function projectBuild(project: GleamProject): Promise<GleamBuildOut
     args.push("--no-print-progress");
   }
 
-  const cmd = args.join(" ");
+  const cmd = `${bin} ${args.join(" ")}`
 
   try {
     log(`$ ${cmd}`);
-    const res = await exec(cmd, { cwd, encoding: "utf8" });
+    const res = await execa(bin, args, { cwd, encoding: "utf8", timeout: 5000 });
     const out = `${res.stdout}${res.stderr}`;
 
     if (out) {
       log(`out: ${out}`);
     }
 
+    log(`:>[build] ${res.durationMs}ms`)
     return res;
   } catch (err) {
     log(`Failed '${cmd}`, true);

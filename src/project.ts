@@ -231,7 +231,7 @@ export async function projectBuild(project: GleamProject): Promise<GleamBuildOut
 }
 
 /**
- * Returns replaced file path from gleam to param ext correspondent file.
+ * Replace file path from gleam to param ext correspondent file.
  *
  * @param file File path to replaced.
  * @param ext Extension to replaced.
@@ -241,8 +241,9 @@ export function replaceId(file: string, ext: string = EXT_MJS): string | undefin
   return file.replace(GLEAM_REGEX_FILE, ext);
 }
 
+
 /**
- * Returns is file is a gleam files .gleam
+ * Is file a gleam file .gleam and is relative.
  *
  * @param file Path file to check.
  * @returns If is gleam file or not.

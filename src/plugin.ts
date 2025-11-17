@@ -23,63 +23,6 @@ import {
   GLEAM_CONFIG,
 } from "./util";
 
-function normalize(project: GleamProject, importer: string, source = ""): string | undefined {
-  const { cfg, log, dir: { cwd, src } } = project;
-
-  // early skipping
-  if (!isGleam(importer) && !source.endsWith("gleam.mjs")) {
-    log(`[resolve] skip: not gleam file`)
-    log(`:> skip source ${source}`)
-    log(`:> skip importer ${importer}`)
-    return;
-  };
-
-  if (!cfg) {
-    const error = `Not found ${src}${sep}${GLEAM_CONFIG}`;
-
-    log(error, true);
-    throw Error(`ERROR | ${error}`)
-  }
-
-  const replaced = replaceId(importer);
-
-  if (!replaced) {
-    // skipping nothing to do
-    return;
-  }
-
-  let path = relative(cwd, replaced);
-
-  if (path.startsWith(GLEAM_SRC)) {
-    path = path.replace(`${GLEAM_SRC}${sep}`, `${cfg?.name}${sep}`);
-  }
-
-  log(`[normalize] ok!`);
-  log(`:>[normalize] ${path}`);
-  log(`:>[normalize] source: ${source}`);
-  log(`:>[normalize] importer: ${importer}`);
-  return path;
-}
-
-function resolveHex(project: GleamProject, source: string): string {
-  const { log, dir: { out } } = project;
-  const mod = replaceId(source.slice(4));
-
-  if (!mod) {
-    const error = `Not found import from 'hex:${mod}'`;
-
-    log(error, true);
-    throw new Error(error);
-  }
-
-  const id = join(out, mod);
-
-  log(`[resolve-hex] ok!`);
-  log(`:>[resolve-hex] mod: ${mod}`)
-  log(`:>[resolve-hex] path: ${id}`)
-  return id;
-}
-
 /**
  * Resolve the identification file/path gleam to mjs.
  *
@@ -202,4 +145,74 @@ export function exclude(config: UserConfig): UserConfig | undefined {
 
   console.log(`[config-vite] watch exclude 'build/**'`);
   return config;
+}
+
+// PRIVATE
+//
+
+// Resolve prefix 'hex:'
+//
+function resolveHex(project: GleamProject, source: string): string {
+  const { log, dir: { out } } = project;
+  const mod = replaceId(source.slice(4));
+
+  if (!mod) {
+    const error = `Empty module 'hex:'`;
+
+    log(error, true);
+    throw new Error(error);
+  }
+
+  const id = join(out, mod);
+
+  log(`[resolve-hex] ok!`);
+  log(`:>[resolve-hex] mod: ${mod}`)
+  log(`:>[resolve-hex] path: ${id}`)
+  return id;
+}
+
+// Normalize relative path
+//
+function normalize(
+  project: GleamProject,
+  importer: string,
+  source = ""
+): string | undefined {
+  const { cfg, log, dir: { cwd, src } } = project;
+
+  // early skipping
+  if (!isGleam(importer) && !source.endsWith("gleam.mjs")) {
+    log(`[resolve] skip: not gleam file`)
+    log(`:> skip source ${source}`)
+    log(`:> skip importer ${importer}`)
+    return;
+  };
+
+  if (!cfg) {
+    const error = `Not found ${src}${sep}${GLEAM_CONFIG}`;
+
+    log(error, true);
+    throw Error(`ERROR | ${error}`)
+  }
+
+  const replaced = replaceId(importer);
+
+  if (!replaced) {
+    // skipping nothing to do
+    return;
+  }
+
+  let path = relative(cwd, replaced);
+  log(`:>[normalize] relative cwd ${path}`);
+
+  if (path.startsWith(GLEAM_SRC)) {
+    path = path.replace(`${GLEAM_SRC}${sep}`, `${cfg?.name}${sep}`);
+    log(`:>[normalize] found 'src' replace to '${cfg?.name}${sep}'`);
+  }
+
+  log(`[normalize] ok!`);
+  log(`:>[normalize] ${path}`);
+  log(`:>[normalize] source: ${source}`);
+  log(`:>[normalize] importer: ${importer}`);
+  return path;
 }

@@ -18,6 +18,7 @@ import { exec as execCallback } from "node:child_process";
 import { parse } from "toml";
 
 import {
+  PLUGIN_VRN,
   GLEAM_BIN,
   GLEAM_SRC,
   GLEAM_BUILD,
@@ -27,7 +28,6 @@ import {
   EXT_GLEAM,
   EXT_MJS,
   logger,
-  PLUGIN_VRN
 } from "./util";
 
 // promisify

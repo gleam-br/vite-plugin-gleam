@@ -44,9 +44,7 @@ export interface GleamProject {
   // util.logger(level)
   log: any,
   dir: GleamDir,
-  args: {
-    build: GleamBuild,
-  }
+  build: GleamBuild,
 }
 
 /**
@@ -140,12 +138,10 @@ export function projectNew(options: any | undefined): GleamProject {
       src,
       out,
     },
-    args: {
-      build: {
-        noPrintProgress,
-        warningsAsErrors
-      }
-    },
+    build: {
+      noPrintProgress,
+      warningsAsErrors
+    }
   };
 }
 
@@ -206,9 +202,7 @@ export async function projectBuild(project: GleamProject): Promise<GleamBuildOut
     cfg,
     log,
     dir: { cwd },
-    args: {
-      build: { noPrintProgress, warningsAsErrors }
-    }
+    build: { noPrintProgress, warningsAsErrors }
   } = project;
 
   const args = [bin, "build", "--target", "javascript"];

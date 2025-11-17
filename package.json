@@ -1,7 +1,7 @@
 {
   "name": "vite-plugin-gleam",
   "description": "Gleam plugin to vite runtime.",
-  "version": "0.1.6",
+  "version": "0.1.7-alpha+001",
   "type": "module",
   "files": [
     "dist",

@@ -15,7 +15,7 @@ import {
   exclude,
   resolveId,
   transform,
-} from "./vite";
+} from "./plugin";
 
 import {
   projectNew,

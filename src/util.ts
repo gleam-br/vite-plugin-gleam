@@ -5,10 +5,13 @@
  */
 
 import { sep } from "node:path";
-import { name } from "../package.json";
+import { name, version } from "../package.json";
 
 /** Plugin name from package.json */
 export const PLUGIN_NAME: string = name;
+
+/** Plugin version from package.json */
+export const PLUGIN_VRN: string = version;
 
 /** Gleam binary file */
 export const GLEAM_BIN = "gleam";

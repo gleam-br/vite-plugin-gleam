@@ -26,7 +26,8 @@ import {
   GLEAM_REGEX_CONFIG,
   EXT_GLEAM,
   EXT_MJS,
-  logger
+  logger,
+  PLUGIN_VRN
 } from "./util";
 
 // promisify
@@ -123,7 +124,7 @@ export function projectNew(options: any | undefined): GleamProject {
   // log instance with level and has time prefix
   const log = logger(level, time)
 
-  log(`$ STARTUP OK !`);
+  log(`$ STARTUP OK ${PLUGIN_VRN} !`);
   log(`:> bin: '${bin}'`);
   log(`:> cwd: '${cwd}'`);
   log(`:> log.time: '${time}'`);

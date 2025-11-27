@@ -31,14 +31,24 @@ export const GLEAM_REGEX_CONFIG: RegExp = /gleam\.toml$/;
 /** Regex of gleam file extension */
 export const GLEAM_REGEX_FILE: RegExp = /\.gleam$/;
 
-/** Gleam file extension */
-export const EXT_GLEAM: string = ".gleam";
-
-/** Mjs file extension */
-export const EXT_MJS: string = ".mjs";
-
 /** Gleam constraint to filter gleam files */
 export const CONSTRAINTS: { filter: RegExp } = { filter: GLEAM_REGEX_FILE }
+
+/** Extension files */
+export enum Ext {
+  gleam = ".gleam",
+  mjs = ".mjs",
+  ts = ".ts",
+  dts = ".dts"
+}
+
+/** Log level plugin */
+export enum LogLevel {
+  none = "none",
+  trace = "trace",
+  debug = "debug",
+  info = "info",
+}
 
 /**
  * Log from high order function passing level and if has time in log.
@@ -46,7 +56,7 @@ export const CONSTRAINTS: { filter: RegExp } = { filter: GLEAM_REGEX_FILE }
  * @param msg Message log.
  * @param error if error or not.
  */
-export const logger = (level: string, time = false) => {
+export const logger = (level: LogLevel, time = false) => {
   const isNone = level === "none";
   const isTrace = level === "trace";
   const isDebug = isTrace || level === "debug";

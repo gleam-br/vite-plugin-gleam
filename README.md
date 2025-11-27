@@ -64,3 +64,7 @@ export default defineConfig({
   - [x] ~~auto publish~~ manual publish
     - [x] `npm publish`
 - [ ] Pure gleam code
+
+## Thanks & Acknowledgements
+
+- [Enderchief/gleam-tools](https://github.com/enderchief/gleam-tools)

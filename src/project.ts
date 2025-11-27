@@ -27,9 +27,9 @@ import {
   GLEAM_CONFIG,
   GLEAM_REGEX_FILE,
   GLEAM_REGEX_CONFIG,
-  EXT_GLEAM,
-  EXT_MJS,
+  Ext,
   logger,
+  LogLevel,
 } from "./util";
 
 // promisify
@@ -75,7 +75,7 @@ export interface GleamPlugin {
   bin: string;
   log: {
     time: boolean,
-    level: "info" | "debug" | "trace" | "none"
+    level: LogLevel
   }
   build: GleamBuild;
 }
@@ -244,7 +244,7 @@ export async function projectBuild(project: GleamProject): Promise<GleamBuildOut
  * @param ext Extension to replaced.
  * @returns File path replaced to extension.
  */
-export function replaceId(file: string, ext: string = EXT_MJS): string {
+export function replaceId(file: string, ext: string = Ext.mjs): string {
   return file.replace(GLEAM_REGEX_FILE, ext);
 }
 
@@ -256,7 +256,7 @@ export function replaceId(file: string, ext: string = EXT_MJS): string {
  * @returns If is gleam file or not.
  */
 export function isGleam(file: string): boolean {
-  return endsWith(file, EXT_GLEAM) || GLEAM_REGEX_FILE.test(file);
+  return endsWith(file, Ext.gleam) || GLEAM_REGEX_FILE.test(file);
 }
 
 // PRIVATE

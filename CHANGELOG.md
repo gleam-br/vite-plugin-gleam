@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.7] - 2025-12-18
+
+### Added
+- Add log after build start by @salespaulo
+- Add enum to file Ext[ension] and to LogLevel by @salespaulo
+- Add package execa to exec gleam build without issues in windows by @salespaulo
+- Add package.json prepublishOnly script by @salespaulo
+- Add vite keyword in readme by @salespaulo
+- Add plugin version log in projectNew by @salespaulo
+- Add dev v0.1.7-alpha+001 by @salespaulo
+
+### Changed
+- New version 0.1.7 by @salespaulo
+- Organize package.json by @salespaulo
+- Organize import in project.ts by @salespaulo
+- Update changelog by @github-actions[bot]
+
 ## [0.1.6] - 2025-11-17
 
 ### Added
@@ -98,6 +115,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## New Contributors
 * @salespaulo made their first contribution
+[0.1.7]: https://github.com/gleam-br/vite-plugin-gleam/compare/v0.1.6..v0.1.7
 [0.1.6]: https://github.com/gleam-br/vite-plugin-gleam/compare/v0.1.5..v0.1.6
 [0.1.5]: https://github.com/gleam-br/vite-plugin-gleam/compare/v0.1.4..v0.1.5
 [0.1.4]: https://github.com/gleam-br/vite-plugin-gleam/compare/v0.1.3..v0.1.4

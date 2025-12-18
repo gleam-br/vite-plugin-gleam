@@ -51,18 +51,18 @@ export default function plugin(options: any | undefined): Plugin {
     async buildStart() {
       // refresh config gleam.toml
       prj = await projectConfig(prj);
-      const { log } = prj;
+
       // build function singleton
-      await projectBuild(prj);
-      log(`[buildStart] ok!`);
+      await projectBuild(prj, true);
+
+      prj.log(`[buildStart] ok!`);
     },
     async handleHotUpdate(ctx: HmrContext) {
       if (isGleam(ctx.file)) {
-        const { log } = prj;
-
         await projectBuild(prj);
-        log(`[hotUpdate] ok!`);
-        log(`:>[hotUpdate] file: ${ctx.file}`)
+
+        prj.log(`[hotUpdate] ok!`);
+        prj.log(`:>[hotUpdate] file: ${ctx.file}`)
       }
     },
   };

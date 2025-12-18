@@ -200,7 +200,7 @@ export async function projectConfig(project: GleamProject): Promise<GleamProject
  *
  * @returns Promisify executing gleam build.
  */
-export async function projectBuild(project: GleamProject): Promise<GleamBuildOut> {
+export async function projectBuild(project: GleamProject, silent = false): Promise<GleamBuildOut> {
   const {
     bin,
     log,
@@ -232,7 +232,7 @@ export async function projectBuild(project: GleamProject): Promise<GleamBuildOut
     log(`:>[build] ${res.durationMs}ms`)
     return res;
   } catch (err) {
-    log(`Failed '${cmd}`, true);
+    log(`${!silent ? "$" : ""} ${err}`, true);
     throw err;
   }
 }

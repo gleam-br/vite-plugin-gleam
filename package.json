@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-gleam",
-  "version": "0.1.7-alpha+003",
+  "version": "0.1.7",
   "license": "Apache-2.0",
   "description": "Gleam plugin to vite runtime.",
   "type": "module",

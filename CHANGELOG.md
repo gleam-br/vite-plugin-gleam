@@ -5,6 +5,26 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.9] - 2026-09-10
+
+### Added
+- Add complete Vitest test suite (unit tests, resolve tests, HMR tests, and E2E Vite build tests)
+- Add O(1) compiled `.mjs` module resolution with `getCompiledMjsPath`
+- Add direct export of `GleamPlugin`, `GleamProject`, `GleamConfig`, `GleamDir`, and `GleamBuild` types from entrypoint
+- Add Vite browser Error Overlay reporting for Gleam compiler errors during HMR
+- Add automated test step to GitHub Actions CI workflow
+
+### Changed
+- Modernize plugin architecture for Vite 5, Vite 6, and Rolldown compatibility
+- Move `vite` to `peerDependencies` (`>=4.0.0 || ^5.0.0 || ^6.0.0`) and `devDependencies`
+- Add `server.watch.ignored` configuration for `**/build/dev/javascript/**` to prevent full reload loops in dev server
+- Normalize all module IDs and paths to standard POSIX format for cross-platform stability (Windows, Linux, macOS)
+- Invalidate only affected modules in `handleHotUpdate` for granular and fast HMR
+
+### Fixed
+- Fix Node.js `[DEP0205] module.register()` deprecation warning by upgrading peer/dev dependencies
+- Fix full page reload issue during `gleam build --target javascript` by preventing Vite from watching build output files
+
 ## [0.1.8] - 2025-12-18
 
 ### Changed

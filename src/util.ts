@@ -4,7 +4,6 @@
  *
  */
 
-import { sep } from "node:path";
 import { name, version } from "../package.json";
 
 /** Plugin name from package.json */
@@ -19,11 +18,11 @@ export const GLEAM_BIN = "gleam";
 /** Gleam source dir */
 export const GLEAM_SRC: string = "src";
 
-/** Gleam build dir */
-export const GLEAM_BUILD: string = `build${sep}dev${sep}javascript`;
+/** Gleam build dir (POSIX style for Vite/Rollup/Rolldown compatibility) */
+export const GLEAM_BUILD: string = "build/dev/javascript";
 
 /** Default location of gleam config file */
-export const GLEAM_CONFIG: string = `gleam.toml`;
+export const GLEAM_CONFIG: string = "gleam.toml";
 
 /** Regex of gleam config file */
 export const GLEAM_REGEX_CONFIG: RegExp = /gleam\.toml$/;
@@ -32,14 +31,14 @@ export const GLEAM_REGEX_CONFIG: RegExp = /gleam\.toml$/;
 export const GLEAM_REGEX_FILE: RegExp = /\.gleam$/;
 
 /** Gleam constraint to filter gleam files */
-export const CONSTRAINTS: { filter: RegExp } = { filter: GLEAM_REGEX_FILE }
+export const CONSTRAINTS: { filter: RegExp } = { filter: GLEAM_REGEX_FILE };
 
 /** Extension files */
 export enum Ext {
   gleam = ".gleam",
   mjs = ".mjs",
   ts = ".ts",
-  dts = ".dts"
+  dts = ".dts",
 }
 
 /** Log level plugin */
@@ -51,10 +50,21 @@ export enum LogLevel {
 }
 
 /**
+ * Normalizes Windows backslashes to standard POSIX forward slashes.
+ * Crucial for Vite, Rollup, and Rolldown module ID consistency across platforms.
+ *
+ * @param id Path or module ID to normalize.
+ * @returns Normalized POSIX path.
+ */
+export function normalizePath(id: string): string {
+  return id.replace(/\\/g, "/");
+}
+
+/**
  * Log from high order function passing level and if has time in log.
  *
- * @param msg Message log.
- * @param error if error or not.
+ * @param level Log level.
+ * @param time If date and time should be prepended.
  */
 export const logger = (level: LogLevel, time = false) => {
   const isNone = level === "none";
@@ -62,7 +72,6 @@ export const logger = (level: LogLevel, time = false) => {
   const isDebug = isTrace || level === "debug";
   const isInfo = !isDebug;
 
-  // console.log(msg)
   return (msg: string, error = false): void => {
     const isCmd = msg.startsWith("$ ");
 
@@ -76,7 +85,8 @@ export const logger = (level: LogLevel, time = false) => {
       return;
     }
 
-    const prefixTime = time === true ? `${new Date().toISOString()}` : "";
-    console.log(`${prefixTime}[${PLUGIN_NAME}]${prefix}${error ? " ERROR |" : ""} ${msg}`);
-  }
-}
+    const prefixTime = time === true ? `${new Date().toISOString()} ` : "";
+    const logMethod = error ? console.error : console.log;
+    logMethod(`${prefixTime}[${PLUGIN_NAME}]${prefix}${error ? " ERROR |" : ""} ${msg}`);
+  };
+};

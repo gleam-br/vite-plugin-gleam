@@ -14,7 +14,7 @@ describe("resolveId and paths", () => {
       version: "0.1.0",
       target: "javascript",
     },
-    log: () => {},
+    log: () => { },
     dir: {
       cwd: baseDir,
       src: `${baseDir}/src`,

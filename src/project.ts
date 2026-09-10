@@ -5,18 +5,13 @@
  */
 
 import { promisify } from "node:util";
-import { join, resolve } from "node:path";
-
+import { resolve } from "node:path";
 import {
   lstat as lstatCallback,
   readFile as readFileCallback,
 } from "node:fs";
-
 import { cwd as processCwd } from "node:process";
-import { exec as execCallback } from "node:child_process";
-
 import { parse } from "toml";
-
 import { execa } from "execa";
 
 import {
@@ -30,6 +25,7 @@ import {
   Ext,
   logger,
   LogLevel,
+  normalizePath,
 } from "./util";
 
 // promisify
@@ -40,13 +36,13 @@ const readFile = promisify(readFileCallback);
  * Gleam project info.
  */
 export interface GleamProject {
-  bin: string,
+  bin: string;
   // undefined when no read gleam.toml yet
-  cfg: GleamConfig | undefined,
+  cfg: GleamConfig | undefined;
   // util.logger(level)
-  log: any,
-  dir: GleamDir,
-  build: GleamBuild,
+  log: (msg: string, error?: boolean) => void;
+  dir: GleamDir;
+  build: GleamBuild;
 }
 
 /**
@@ -56,28 +52,36 @@ export interface GleamConfig {
   name: string;
   version: string;
   target: string;
-  javascript: {
-    typescript_declarations: boolean
-  }
+  javascript?: {
+    typescript_declarations?: boolean;
+  };
 }
 
 export interface GleamDir {
-  cwd: string
-  src: string
-  out: string
+  cwd: string;
+  src: string;
+  out: string;
 }
 
 /**
  * Gleam plugin options.
  */
 export interface GleamPlugin {
-  cwd: string;
-  bin: string;
-  log: {
-    time: boolean,
-    level: LogLevel
-  }
-  build: GleamBuild;
+  cwd?: string;
+  bin?: string;
+  log?: {
+    time?: boolean;
+    level?: LogLevel | "none" | "trace" | "debug" | "info";
+  } | LogLevel | "none" | "trace" | "debug" | "info";
+  time?: boolean;
+  warningsAsErrors?: boolean;
+  noPrintProgress?: boolean;
+  build?: {
+    bin?: string;
+    config?: string;
+    noPrintProgress?: boolean;
+    warningsAsErrors?: boolean;
+  };
 }
 
 /**
@@ -92,20 +96,26 @@ export interface GleamBuild {
  * Gleam build output.
  */
 export interface GleamBuildOut {
-  stdout: string
-  stderr: string
+  stdout: string;
+  stderr: string;
+  durationMs?: number;
 }
 
 /** Gleam options default */
-const GLEAM_OPT_EMPTY = {
+const GLEAM_OPT_EMPTY: {
+  cwd: string;
+  bin: string;
+  log: { time: boolean; level: LogLevel };
+  build: GleamBuild;
+} = {
   bin: GLEAM_BIN,
-  log: { time: false, level: "none" },
+  log: { time: false, level: LogLevel.none },
   cwd: processCwd(),
   build: {
     noPrintProgress: true,
     warningsAsErrors: false,
-  }
-} as GleamPlugin;
+  },
+};
 
 /**
  * Get gleam project info from plugin options.
@@ -113,17 +123,20 @@ const GLEAM_OPT_EMPTY = {
  * @param options Gleam plugin options.
  * @returns Project info like gleam binary, directories and more.
  */
-export function projectNew(options: any | undefined): GleamProject {
+export function projectNew(options?: GleamPlugin): GleamProject {
   const opts = getPluginOpts(options);
-  const { cwd, bin, log: { level, time }, build: { noPrintProgress, warningsAsErrors } } = opts
+  const cwd = normalizePath(opts.cwd);
+  const bin = opts.bin;
+  const { level, time } = opts.log;
+  const { noPrintProgress, warningsAsErrors } = opts.build;
+
   // Gleam expects a project to have `src/` directory at project root.
-  const src = resolve(cwd, GLEAM_SRC);
-  // Gleam compiler outputs artifacts under `build/` directory at project root.
-  // Directory structure inside is not documentated, but this is the only way
-  // to access built JS files. There is no way to specify output directory also.
-  const out = resolve(cwd, GLEAM_BUILD);
+  const src = normalizePath(resolve(cwd, GLEAM_SRC));
+  // Gleam compiler outputs artifacts under `build/dev/javascript` directory at project root.
+  const out = normalizePath(resolve(cwd, GLEAM_BUILD));
+
   // log instance with level and has time prefix
-  const log = logger(level, time)
+  const log = logger(level as LogLevel, time);
 
   log(`$ STARTUP OK ${PLUGIN_VRN} !`);
   log(`:> bin: '${bin}'`);
@@ -142,8 +155,8 @@ export function projectNew(options: any | undefined): GleamProject {
     },
     build: {
       noPrintProgress,
-      warningsAsErrors
-    }
+      warningsAsErrors,
+    },
   };
 }
 
@@ -152,16 +165,13 @@ export function projectNew(options: any | undefined): GleamProject {
  *
  * @param project Gleam project.
  * @returns Gleam config.
- * @see GleamProject
- * @see GleamConfig
  */
 export async function projectConfig(project: GleamProject): Promise<GleamProject> {
   const { log, dir: { cwd } } = project;
-  const path = join(cwd, GLEAM_CONFIG);
+  const path = resolve(cwd, GLEAM_CONFIG);
 
   if (!isConfig(path)) {
     const error = `Not found ${path}`;
-
     log(error, true);
     throw new Error(`ERROR | ${error}`);
   }
@@ -170,18 +180,17 @@ export async function projectConfig(project: GleamProject): Promise<GleamProject
 
   if (!configFile.isFile()) {
     const error = `Not a file ${path} `;
-
     log(error, true);
     throw new Error(`ERROR | ${error}`);
   }
 
   const file = await readFile(path, { encoding: "utf8" });
-  const config = parse(file);
+  const config = parse(file) as GleamConfig;
 
-  const projectWithCfg = {
+  const projectWithCfg: GleamProject = {
     ...project,
-    cfg: config
-  } as GleamProject;
+    cfg: config,
+  };
 
   log(`[config-gleam] ok!`);
   log(`:>[config-gleam] name: '${config.name}'`);
@@ -193,11 +202,8 @@ export async function projectConfig(project: GleamProject): Promise<GleamProject
 /**
  * Gleam build to target javascript.
  *
- * @param bin Gleam binary location.
- * @param projectDirRoot Gleam project root location of gleam.toml.
- * @param noPrintProgress Gleam --no-print-progress build arg.
- * @param warningsAsErrors Gleam --warnings-as-errors build arg.
- *
+ * @param project Gleam project.
+ * @param silent If true, suppresses non-critical command error logs.
  * @returns Promisify executing gleam build.
  */
 export async function projectBuild(project: GleamProject, silent = false): Promise<GleamBuildOut> {
@@ -205,7 +211,7 @@ export async function projectBuild(project: GleamProject, silent = false): Promi
     bin,
     log,
     dir: { cwd },
-    build: { noPrintProgress, warningsAsErrors }
+    build: { noPrintProgress, warningsAsErrors },
   } = project;
 
   const args = ["build", "--target", "javascript"];
@@ -218,23 +224,64 @@ export async function projectBuild(project: GleamProject, silent = false): Promi
     args.push("--no-print-progress");
   }
 
-  const cmd = `${bin} ${args.join(" ")}`
+  const cmd = `${bin} ${args.join(" ")}`;
 
   try {
     log(`$ ${cmd}`);
-    const res = await execa(bin, args, { cwd, encoding: "utf8", timeout: 5000 });
-    const out = `${res.stdout}${res.stderr}`;
+    const res = await execa(bin, args, { cwd, encoding: "utf8", timeout: 30000 });
+    const out = `${res.stdout || ""}${res.stderr || ""}`;
 
     if (out) {
       log(`out: ${out}`);
     }
 
-    log(`:>[build] ${res.durationMs}ms`)
-    return res;
-  } catch (err) {
+    if (res.durationMs !== undefined) {
+      log(`:>[build] ${res.durationMs}ms`);
+    }
+    return {
+      stdout: res.stdout,
+      stderr: res.stderr,
+      durationMs: res.durationMs,
+    };
+  } catch (err: any) {
     log(`${!silent ? "$" : ""} ${err}`, true);
     throw err;
   }
+}
+
+/**
+ * Calculate the corresponding compiled `.mjs` file path for a `.gleam` file.
+ * O(1) performance without disk scanning.
+ *
+ * @param project Gleam project info.
+ * @param gleamFile Absolute or relative path to a .gleam file.
+ * @returns Normalized POSIX path to the generated .mjs file in build/dev/javascript/<pkg>/...
+ */
+export function getCompiledMjsPath(project: GleamProject, gleamFile: string): string | undefined {
+  const { cfg, dir: { cwd, src, out } } = project;
+  if (!cfg?.name) return undefined;
+
+  const normalized = normalizePath(gleamFile);
+  const normalizedSrc = normalizePath(src);
+
+  let rel: string;
+  if (normalized.startsWith(normalizedSrc)) {
+    rel = normalized.slice(normalizedSrc.length).replace(/^\/+/, "");
+  } else {
+    const normalizedCwd = normalizePath(cwd);
+    const fromCwd = normalized.startsWith(normalizedCwd)
+      ? normalized.slice(normalizedCwd.length).replace(/^\/+/, "")
+      : normalized;
+
+    if (fromCwd.startsWith(`${GLEAM_SRC}/`)) {
+      rel = fromCwd.slice(`${GLEAM_SRC}/`.length);
+    } else {
+      rel = fromCwd;
+    }
+  }
+
+  const mjsRel = rel.replace(GLEAM_REGEX_FILE, Ext.mjs);
+  return `${out}/${cfg.name}/${mjsRel}`;
 }
 
 /**
@@ -248,9 +295,8 @@ export function replaceId(file: string, ext: string = Ext.mjs): string {
   return file.replace(GLEAM_REGEX_FILE, ext);
 }
 
-
 /**
- * Is file a gleam file .gleam and is relative.
+ * Is file a gleam file .gleam.
  *
  * @param file Path file to check.
  * @returns If is gleam file or not.
@@ -263,55 +309,68 @@ export function isGleam(file: string): boolean {
 //
 
 // Get options, GleamPlugin, from any.
-//
-function getPluginOpts(options: any | undefined): GleamPlugin {
+export function getPluginOpts(options: any | undefined): {
+  cwd: string;
+  bin: string;
+  log: { level: string; time: boolean };
+  build: { noPrintProgress: boolean; warningsAsErrors: boolean };
+} {
   if (!options || typeof options !== "object") {
-    return GLEAM_OPT_EMPTY;
+    return {
+      cwd: GLEAM_OPT_EMPTY.cwd,
+      bin: GLEAM_OPT_EMPTY.bin,
+      log: { ...GLEAM_OPT_EMPTY.log },
+      build: { ...GLEAM_OPT_EMPTY.build },
+    };
   }
+
   const bin = options.bin
     ? options.bin
     : typeof options.build?.bin === "string"
-      ? options.build?.bin
+      ? options.build.bin
       : GLEAM_BIN;
+
   const cwd = options.cwd
     ? options.cwd
     : typeof options.build?.config === "string"
-      ? options.build?.config
+      ? options.build.config
       : processCwd();
+
   const level = typeof options.log === "string"
     ? options.log
     : typeof options.log?.level === "string"
-      ? options.log?.level
+      ? options.log.level
       : "none";
-  const time = options.time === true
-    || options.log?.time === true;
-  const warningsAsErrors = options.warningsAsErrors === true
-    || options.build?.warningsAsErrors === true;
-  const noPrintProgress = !(options.noPrintProgress === false
-    || options.build?.noPrintProgress === false);
+
+  const time = options.time === true || options.log?.time === true;
+
+  const warningsAsErrors =
+    options.warningsAsErrors === true || options.build?.warningsAsErrors === true;
+
+  const noPrintProgress = !(
+    options.noPrintProgress === false || options.build?.noPrintProgress === false
+  );
 
   return {
     cwd,
     bin,
     log: {
       level,
-      time
+      time,
     },
     build: {
       noPrintProgress,
       warningsAsErrors,
-    }
+    },
   };
 }
 
 // Is config gleam file 'gleam.toml'
-//
 function isConfig(file: string = GLEAM_CONFIG): boolean {
   return endsWith(file, GLEAM_CONFIG) || GLEAM_REGEX_CONFIG.test(file);
 }
 
 // String word ends with term
-//
 function endsWith(word: string, term: string): boolean {
   return word ? word.endsWith(term) : false;
 }

@@ -11,8 +11,7 @@ import { resolve } from "vite";
 import { defineConfig } from "vite";
 
 // type to plugin options
-import gleam from "vite-plugin-gleam";
-import {type GleamPlugin} from "./src/project";
+import gleam, { type GleamPlugin } from "vite-plugin-gleam";
 
 export default defineConfig({
   plugins: [
@@ -34,7 +33,7 @@ export default defineConfig({
         // gleam build arg to show or not cmd output
         noPrintProgress: false
       }
-    } as GleamPlugin)
+    })
   ],
   resolve: {
     alias: {
@@ -55,10 +54,10 @@ export default defineConfig({
 
 ## 🌄 Roadmap
 
-- [ ] Unit tests
+- [x] Unit tests
 - [ ] More docs
-- [ ] GH workflow
-  - [ ] test
+- [x] GH workflow
+  - [x] test
   - [x] build
   - [x] changelog & issue to doc
   - [x] ~~auto publish~~ manual publish

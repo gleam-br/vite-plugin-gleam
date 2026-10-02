@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-10-02
+
+### Changed
+- Merge pull request #8 from gleam-br/vrn/0.2.1 by @salespaulo in [#8](https://github.com/gleam-br/vite-plugin-gleam/pull/8)
+- V0.2.1 by @salespaulo
+- Melhoria no hot-reload, incluindo de dependencias 'via path' e nova funcionalidade de api mock proxy usando o poder do vitejs by @salespaulo
+- Troca do bundler bunup p/ tsup by @salespaulo
+- Gh ajusts by @salespaulo
+- Update changelog by @github-actions[bot]
+
 ## [0.2.0] - 2026-09-15
 
 ### Changed
@@ -141,6 +151,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## New Contributors
 * @salespaulo made their first contribution
+[0.2.1]: https://github.com/gleam-br/vite-plugin-gleam/compare/v0.2.0..v0.2.1
 [0.2.0]: https://github.com/gleam-br/vite-plugin-gleam/compare/v0.1.9..v0.2.0
 [0.1.9]: https://github.com/gleam-br/vite-plugin-gleam/compare/v0.1.8..v0.1.9
 [0.1.8]: https://github.com/gleam-br/vite-plugin-gleam/compare/v0.1.7..v0.1.8

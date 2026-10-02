@@ -1,5 +1,6 @@
 import { existsSync, readdirSync } from "node:fs";
 import { resolve, join } from "node:path";
+import { pathToFileURL } from "node:url";
 import type { ViteDevServer } from "vite";
 import type { GleamProject, GleamPlugin } from "./project";
 
@@ -33,7 +34,8 @@ export function setupMockApi(
       const filePath = join(mockDir, file);
       try {
         // Bust cache to allow hot reloading of mock files
-        const moduleUrl = `file://${filePath}?t=${Date.now()}`;
+        const fileUrl = pathToFileURL(filePath).href;
+        const moduleUrl = `${fileUrl}?t=${Date.now()}`;
         const mod = await import(moduleUrl);
         const data = mod.default || mod;
         Object.assign(mockData, data);

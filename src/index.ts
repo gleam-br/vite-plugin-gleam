@@ -65,12 +65,11 @@ export default function plugin(options?: GleamPlugin): Plugin {
     config(config: UserConfig, _env: ConfigEnv) {
       return exclude(config);
     },
-    configureServer(server) {
+    async configureServer(server) {
       if (options?.mock) {
-        // dynamic import or require the mock logic to avoid top-level load overhead if not used
-        import("./mock.js").then(({ setupMockApi }) => {
-          setupMockApi(server, prj, options.mock);
-        });
+        // Use await to ensure middleware is added BEFORE Vite's internal middlewares
+        const { setupMockApi } = await import("./mock.js");
+        setupMockApi(server, prj, options.mock);
       }
 
       // Add local gleam package dependencies to Vite watcher

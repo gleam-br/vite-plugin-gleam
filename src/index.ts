@@ -25,6 +25,7 @@ import {
   projectBuild,
   getCompiledMjsPath,
   isGleam,
+  getLocalDependenciesPaths,
   type GleamPlugin,
   type GleamProject,
   type GleamConfig,
@@ -63,6 +64,21 @@ export default function plugin(options?: GleamPlugin): Plugin {
     name: PLUGIN_NAME,
     config(config: UserConfig, _env: ConfigEnv) {
       return exclude(config);
+    },
+    configureServer(server) {
+      if (options?.mock) {
+        // dynamic import or require the mock logic to avoid top-level load overhead if not used
+        import("./mock.js").then(({ setupMockApi }) => {
+          setupMockApi(server, prj, options.mock);
+        });
+      }
+
+      // Add local gleam package dependencies to Vite watcher
+      const depPaths = getLocalDependenciesPaths(prj);
+      for (const p of depPaths) {
+        server.watcher.add(p);
+        prj.log(`[watch] watching local dependency: ${p}`);
+      }
     },
     resolveId(source: string, importer: string | undefined) {
       return resolveId(prj, source, importer);

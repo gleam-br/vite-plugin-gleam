@@ -55,6 +55,8 @@ export interface GleamConfig {
   javascript?: {
     typescript_declarations?: boolean;
   };
+  dependencies?: Record<string, any>;
+  "dev-dependencies"?: Record<string, any>;
 }
 
 export interface GleamDir {
@@ -81,6 +83,10 @@ export interface GleamPlugin {
     config?: string;
     noPrintProgress?: boolean;
     warningsAsErrors?: boolean;
+  };
+  mock?: {
+    dir?: string;
+    prefix?: string;
   };
 }
 
@@ -195,8 +201,29 @@ export async function projectConfig(project: GleamProject): Promise<GleamProject
   log(`[config-gleam] ok!`);
   log(`:>[config-gleam] name: '${config.name}'`);
   log(`:>[config-gleam] version: ${config.version}`);
-  log(`:>[config-gleam] typescript_declarations: ${config.javascript?.typescript_declarations}`);
+    log(`:>[config-gleam] typescript_declarations: ${config.javascript?.typescript_declarations}`);
   return projectWithCfg;
+}
+
+/**
+ * Get local path dependencies from gleam.toml
+ */
+export function getLocalDependenciesPaths(project: GleamProject): string[] {
+  const { cfg, dir: { cwd } } = project;
+  if (!cfg) return [];
+
+  const paths: string[] = [];
+  const deps = { ...cfg.dependencies, ...cfg["dev-dependencies"] };
+
+  for (const [name, val] of Object.entries(deps)) {
+    if (val && typeof val === "object" && "path" in val) {
+      const depPath = resolve(cwd, val.path);
+      // add src folder to watch
+      paths.push(resolve(depPath, "src"));
+    }
+  }
+
+  return paths;
 }
 
 /**
@@ -264,24 +291,43 @@ export function getCompiledMjsPath(project: GleamProject, gleamFile: string): st
   const normalized = normalizePath(gleamFile);
   const normalizedSrc = normalizePath(src);
 
+  let pkgName = cfg.name;
   let rel: string;
+
   if (normalized.startsWith(normalizedSrc)) {
     rel = normalized.slice(normalizedSrc.length).replace(/^\/+/, "");
   } else {
-    const normalizedCwd = normalizePath(cwd);
-    const fromCwd = normalized.startsWith(normalizedCwd)
-      ? normalized.slice(normalizedCwd.length).replace(/^\/+/, "")
-      : normalized;
+    const deps = { ...cfg.dependencies, ...cfg["dev-dependencies"] };
+    let foundDep = false;
+    
+    for (const [name, val] of Object.entries(deps)) {
+      if (val && typeof val === "object" && "path" in val) {
+        const depSrc = normalizePath(resolve(cwd, val.path, "src"));
+        if (normalized.startsWith(depSrc)) {
+          pkgName = name;
+          rel = normalized.slice(depSrc.length).replace(/^\/+/, "");
+          foundDep = true;
+          break;
+        }
+      }
+    }
 
-    if (fromCwd.startsWith(`${GLEAM_SRC}/`)) {
-      rel = fromCwd.slice(`${GLEAM_SRC}/`.length);
-    } else {
-      rel = fromCwd;
+    if (!foundDep) {
+      const normalizedCwd = normalizePath(cwd);
+      const fromCwd = normalized.startsWith(normalizedCwd)
+        ? normalized.slice(normalizedCwd.length).replace(/^\/+/, "")
+        : normalized;
+
+      if (fromCwd.startsWith(`${GLEAM_SRC}/`)) {
+        rel = fromCwd.slice(`${GLEAM_SRC}/`.length);
+      } else {
+        rel = fromCwd;
+      }
     }
   }
 
-  const mjsRel = rel.replace(GLEAM_REGEX_FILE, Ext.mjs);
-  return `${out}/${cfg.name}/${mjsRel}`;
+  const mjsRel = rel!.replace(GLEAM_REGEX_FILE, Ext.mjs);
+  return `${out}/${pkgName}/${mjsRel}`;
 }
 
 /**

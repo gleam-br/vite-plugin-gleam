@@ -8,7 +8,7 @@ export function setupMockApi(
   server: ViteDevServer,
   project: GleamProject,
   options: GleamPlugin["mock"]
-) {
+): void {
   if (!options) return;
 
   const dir = options.dir || "./mock";
@@ -63,7 +63,7 @@ export function setupMockApi(
     let urlPath = req.url.split("?")[0];
 
     // Intercept with prefix
-    if (urlPath.startsWith(prefix)) {
+    if (urlPath != undefined && urlPath.startsWith(prefix)) {
       urlPath = urlPath.replace(prefix, "");
     } else {
       // Not a mock route

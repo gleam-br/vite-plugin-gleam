@@ -133,10 +133,12 @@ export default function plugin(options?: GleamPlugin): Plugin {
       const mjsPath = getCompiledMjsPath(prj, ctx.file);
 
       if (mjsPath) {
-        const mjsMod = ctx.server.moduleGraph.getModuleById(mjsPath);
-        if (mjsMod) {
-          ctx.server.moduleGraph.invalidateModule(mjsMod);
-          affectedModules.add(mjsMod);
+        const mjsMods = ctx.server.moduleGraph.getModulesByFile(mjsPath);
+        if (mjsMods) {
+          for (const mjsMod of mjsMods) {
+            ctx.server.moduleGraph.invalidateModule(mjsMod);
+            affectedModules.add(mjsMod);
+          }
         }
       }
 

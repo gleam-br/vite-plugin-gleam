@@ -73,25 +73,36 @@ export function setupMockApi(
     const method = req.method;
     const routeKey = `${method} ${urlPath}`;
 
-    // Static mock data check
-    if (mockData[routeKey]) {
-      project.log(`[mock] Intercepting: ${routeKey}`);
+    let matchedKey = mockData[routeKey] ? routeKey : undefined;
+
+    if (!matchedKey) {
+      for (const pattern of Object.keys(mockData)) {
+        const [pMethod, pPath] = pattern.split(" ");
+        if (pMethod === method && pPath) {
+          if (pPath.includes(":") || pPath.includes("*")) {
+            const regexStr = "^" + pPath.replace(/:[^\/]+/g, "([^/]+)").replace(/\*/g, ".*") + "$";
+            if (new RegExp(regexStr).test(urlPath)) {
+              matchedKey = pattern;
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    if (matchedKey) {
+      project.log(`[mock] Intercepting: ${routeKey} (pattern: ${matchedKey})`);
       res.setHeader("Content-Type", "application/json");
 
-      // Check if it's a function (dynamic mock)
-      if (typeof mockData[routeKey] === "function") {
-        return mockData[routeKey](req, res);
+      if (typeof mockData[matchedKey] === "function") {
+        return mockData[matchedKey](req, res);
       }
 
-      // Return static data with a bit of latency
       setTimeout(() => {
-        res.end(JSON.stringify(mockData[routeKey]));
+        res.end(JSON.stringify(mockData[matchedKey]));
       }, 300);
       return;
     }
-
-    // Dynamic pattern matching can be added here
-    // Ex: POST /properties -> handled by mockData['POST /properties']
 
     // If we have a prefix match but no route, maybe it's meant to be 404
     project.log(`[mock] Not found in mock: ${routeKey}`, true);
